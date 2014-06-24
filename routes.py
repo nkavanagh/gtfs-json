@@ -26,12 +26,19 @@ def main():
     parser.add_argument('--type', type=int,
                         help='only show routes of a particular type')
 
+    parser.add_argument('--output',
+                        help='output to file instead of stdout')
+
     args = parser.parse_args()
 
     if not os.path.isfile(args.filename):
         print('File not found: {0}'.format(args.filename),
               file=sys.stderr)
         sys.exit(2)
+
+    output_file = sys.stdout
+    if args.output is not None:
+        output_file = open(args.output, 'w')
 
     # feed
     feed = gtfs.Feed(args.filename)
@@ -48,7 +55,8 @@ def main():
 
     # output json
     output = json.dumps(routes, indent=4)
-    print('{0}'.format(output))
+    print('{0}'.format(output),
+          file=output_file)
 
     sys.exit(0)
 
