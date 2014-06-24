@@ -7,32 +7,11 @@ Lists routes available from a GTFS feed
 """
 
 from __future__ import print_function
-import pandas as pd
-import zipfile
 import sys
 import argparse
 import os
 import json
-
-
-class Feed(object):
-    """
-    Represents a GTFS data feed
-    """
-    def __init__(self, path):
-        if zipfile.is_zipfile(path):
-            archive = zipfile.ZipFile(path)
-            path = path.rstrip('.zip') + '/'
-            archive.extractall(path)
-
-        self.routes = pd.read_csv(path + 'routes.txt',
-                                  index_col='route_id',
-                                  usecols=['route_id',
-                                           'route_long_name',
-                                           'route_type'],
-                                  dtype={'route_id': str,
-                                         'route_long_name': str,
-                                         'route_type': int})
+from gtfs import feed as gtfs
 
 
 def main():
@@ -55,7 +34,7 @@ def main():
         sys.exit(2)
 
     # feed
-    feed = Feed(args.filename)
+    feed = gtfs.Feed(args.filename)
 
     routes = []
 
