@@ -31,7 +31,7 @@ def main():
 
     args = parser.parse_args()
 
-    if not os.path.isfile(args.filename):
+    if not os.path.exists(args.filename):
         print('File not found: {0}'.format(args.filename),
               file=sys.stderr)
         sys.exit(2)
@@ -43,15 +43,7 @@ def main():
     # feed
     feed = gtfs.Feed(args.filename)
 
-    routes = []
-
-    for route_id, row in feed.routes.iterrows():
-        route = {'id': route_id,
-                 'name': row.route_long_name,
-                 'type': row.route_type}
-
-        if (args.type == row.route_type):
-            routes.append(route)
+    routes = feed.get_routes(args.type)
 
     # output json
     output = json.dumps(routes, indent=4)
